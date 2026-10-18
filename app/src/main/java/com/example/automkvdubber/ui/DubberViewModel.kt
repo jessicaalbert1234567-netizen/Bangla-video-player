@@ -92,7 +92,7 @@ class DubberViewModel(application: Application) : AndroidViewModel(application),
         if (status == TextToSpeech.SUCCESS) {
             val ttsInstance = tts ?: return
             val engine = ttsInstance.defaultEngine ?: "Google TTS"
-            val bnLocale = Locale("bn", "BD")
+            val bnLocale = Locale.forLanguageTag("bn-BD")
             val langResult = ttsInstance.setLanguage(bnLocale)
 
             val supported = langResult != TextToSpeech.LANG_MISSING_DATA && langResult != TextToSpeech.LANG_NOT_SUPPORTED
