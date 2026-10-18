@@ -89,52 +89,73 @@ class DubberViewModel(application: Application) : AndroidViewModel(application),
     }
 
     override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            val ttsInstance = tts ?: return
-            val engine = ttsInstance.defaultEngine ?: "Google TTS"
-            val bnLocale = Locale.forLanguageTag("bn-BD")
-            val langResult = ttsInstance.setLanguage(bnLocale)
+        try {
+            if (status == TextToSpeech.SUCCESS) {
+                val ttsInstance = tts ?: return
+                val engine = ttsInstance.defaultEngine ?: "Google TTS"
+                val bnLocale = Locale.forLanguageTag("bn-BD")
+                val langResult = try {
+                    ttsInstance.setLanguage(bnLocale)
+                } catch (_: Throwable) {
+                    TextToSpeech.LANG_NOT_SUPPORTED
+                }
 
-            val supported = langResult != TextToSpeech.LANG_MISSING_DATA && langResult != TextToSpeech.LANG_NOT_SUPPORTED
+                val supported = langResult != TextToSpeech.LANG_MISSING_DATA && langResult != TextToSpeech.LANG_NOT_SUPPORTED
 
-            _uiState.update {
-                it.copy(
-                    isTtsReady = true,
-                    ttsLanguageSupported = supported,
-                    ttsEngineName = if (engine.contains("google", ignoreCase = true)) "Google TTS" else engine
-                )
-            }
+                _uiState.update {
+                    it.copy(
+                        isTtsReady = true,
+                        ttsLanguageSupported = supported,
+                        ttsEngineName = if (engine.contains("google", ignoreCase = true)) "Google TTS" else engine
+                    )
+                }
 
-            if (supported) {
-                addLog("✅ Google Text-to-Speech (বাংলা) প্রস্তুত!", LogLevel.SUCCESS)
+                if (supported) {
+                    addLog("✅ Google Text-to-Speech (বাংলা) প্রস্তুত!", LogLevel.SUCCESS)
+                } else {
+                    addLog("⚠️ বাংলা ভয়েস ডাটা ফোনে ইনস্টল নেই। Settings > Text-to-speech থেকে বাংলা ডাউনলোড করুন।", LogLevel.WARNING)
+                }
             } else {
-                addLog("⚠️ বাংলা ভয়েস ডাটা ফোনে ইনস্টল নেই। Settings > Text-to-speech থেকে বাংলা ডাউনলোড করুন।", LogLevel.WARNING)
+                _uiState.update { it.copy(isTtsReady = false) }
+                addLog("❌ Text-to-Speech শুরু করতে সমস্যা হয়েছে।", LogLevel.ERROR)
             }
-        } else {
+        } catch (t: Throwable) {
+            t.printStackTrace()
             _uiState.update { it.copy(isTtsReady = false) }
-            addLog("❌ Text-to-Speech শুরু করতে সমস্যা হয়েছে।", LogLevel.ERROR)
+            addLog("⚠️ TTS সতর্কবার্তা: ${t.localizedMessage}", LogLevel.WARNING)
         }
     }
 
     fun selectMkvUri(uri: Uri) {
-        val context = getApplication<Application>().applicationContext
-        val fileName = StorageHelper.getFileName(context, uri)
-        val fileSize = StorageHelper.getFileSizeFormatted(context, uri)
+        try {
+            val context = getApplication<Application>().applicationContext
+            try {
+                val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                context.contentResolver.takePersistableUriPermission(uri, takeFlags)
+            } catch (_: Throwable) {
+                // Some document providers do not support persistable permissions
+            }
 
-        _uiState.update {
-            it.copy(
-                selectedMkvUri = uri,
-                selectedMkvName = fileName,
-                selectedMkvSize = fileSize,
-                currentStep = PipelineStep.IDLE,
-                progressPercent = 0,
-                statusMessage = "নির্বাচিত: $fileName ($fileSize)",
-                outputs = null,
-                subtitles = emptyList()
-            )
+            val fileInfo = StorageHelper.getFileInfo(context, uri)
+
+            _uiState.update {
+                it.copy(
+                    selectedMkvUri = uri,
+                    selectedMkvName = fileInfo.displayName,
+                    selectedMkvSize = fileInfo.sizeFormatted,
+                    currentStep = PipelineStep.IDLE,
+                    progressPercent = 0,
+                    statusMessage = "নির্বাচিত: ${fileInfo.displayName} (${fileInfo.sizeFormatted})",
+                    outputs = null,
+                    subtitles = emptyList()
+                )
+            }
+
+            addLog("📁 MKV ফাইল লোড হয়েছে: ${fileInfo.displayName} (${fileInfo.sizeFormatted})", LogLevel.INFO)
+        } catch (t: Throwable) {
+            t.printStackTrace()
+            addLog("❌ ফাইল লোড করতে সমস্যা: ${t.localizedMessage}", LogLevel.ERROR)
         }
-
-        addLog("📁 MKV ফাইল লোড হয়েছে: $fileName ($fileSize)", LogLevel.INFO)
     }
 
     fun startPipeline() {
@@ -193,8 +214,9 @@ class DubberViewModel(application: Application) : AndroidViewModel(application),
                     prepareMediaPlayer(audioUri)
                 }
 
-            } catch (e: Exception) {
-                val errorMsg = e.localizedMessage ?: "অপ্রত্যাশিত সমস্যা দেখা দিয়েছে"
+            } catch (t: Throwable) {
+                t.printStackTrace()
+                val errorMsg = t.localizedMessage ?: t.javaClass.simpleName ?: "অপ্রত্যাশিত ত্রুটি ঘটেছে"
                 _uiState.update {
                     it.copy(
                         currentStep = PipelineStep.ERROR,

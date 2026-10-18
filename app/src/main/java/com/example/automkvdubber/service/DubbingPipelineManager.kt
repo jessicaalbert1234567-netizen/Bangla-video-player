@@ -50,19 +50,16 @@ class DubbingPipelineManager(
 
         onLog("🎬 চলচ্চিত্র নির্বাচন: $rawBaseName (${StorageHelper.getFileSizeFormatted(context, mkvUri)})", LogLevel.INFO)
 
+        val inputHandle = StorageHelper.obtainInputHandle(context, mkvUri, workDir)
+        val safInput = inputHandle.path
+
         try {
             // STEP 1: PREPARING INPUT
             onStepChanged(PipelineStep.PREPARING, 5, "MKV ইনপুট যাচাই করা হচ্ছে...")
-            val safInput = try {
-                FFmpegKitConfig.getSafParameterForRead(context, mkvUri)
-            } catch (e: Exception) {
-                null
+            if (safInput.isBlank()) {
+                throw IllegalStateException("MKV ফাইলের জন্য সরাসরি রিড হ্যান্ডেল পাওয়া যায়নি।")
             }
-
-            if (safInput.isNullOrBlank()) {
-                throw IllegalStateException("MKV ফাইলের জন্য সরাসরি SAF হ্যান্ডেল পাওয়া যায়নি।")
-            }
-            onLog("✅ শূন্য-মেমোরি মোডে ফাইল লোড করা হয়েছে (কোনো কপি ছাড়াই সরাসরি স্ট্রিম)।", LogLevel.SUCCESS)
+            onLog("✅ ফাইল হ্যান্ডেল প্রস্তুত: $safInput", LogLevel.SUCCESS)
 
             if (isCancelled) return@withContext GeneratedOutputs()
 
@@ -231,6 +228,7 @@ class DubbingPipelineManager(
                 dubbedMkvVideoPath = finalDubbedMkvPath
             )
         } finally {
+            inputHandle.close()
             // Clean up temporary wav segment files to free up disk space
             workDir.deleteRecursively()
         }

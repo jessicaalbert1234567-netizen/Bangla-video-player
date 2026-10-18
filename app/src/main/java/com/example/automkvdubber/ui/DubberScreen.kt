@@ -273,7 +273,15 @@ fun DubberScreen(viewModel: DubberViewModel) {
                     uiState = uiState,
                     isProcessing = isProcessing,
                     onSelectClick = {
-                        filePicker.launch(arrayOf("video/x-matroska", "video/*", "*/*"))
+                        try {
+                            filePicker.launch(arrayOf("video/*", "*/*"))
+                        } catch (e: Exception) {
+                            try {
+                                filePicker.launch(arrayOf("*/*"))
+                            } catch (e2: Exception) {
+                                Toast.makeText(context, "ফাইল সিলেক্টর চালু করতে সমস্যা: ${e2.localizedMessage}", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     },
                     onStartClick = { viewModel.startPipeline() },
                     onCancelClick = { viewModel.cancelPipeline() }
