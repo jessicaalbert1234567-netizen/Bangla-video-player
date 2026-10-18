@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Movie clapper top arm with angled clapper stripes -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M27,33 L81,33 C82.6,33 84,34.4 84,36 L84,41 L24,41 L24,36 C24,34.4 25.4,33 27,33 Z" />
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M34,33 L39,33 L35,41 L30,41 Z" />
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M48,33 L53,33 L49,41 L44,41 Z" />
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M62,33 L67,33 L63,41 L58,41 Z" />
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M76,33 L81,33 L77,41 L72,41 Z" />
+
+    <!-- Movie clapper main body -->
+    <path
+        android:fillColor="#1E293B"
+        android:pathData="M24,43 L84,43 L84,75 C84,77.2 82.2,79 80,79 L28,79 C25.8,79 24,77.2 24,75 Z" />
+
+    <!-- Subtitle lines representation -->
+    <path
+        android:fillColor="#64748B"
+        android:pathData="M30,49 L52,49 C52.5,49 53,49.5 53,50 C53,50.5 52.5,51 52,51 L30,51 C29.5,51 29,50.5 29,50 C29,49.5 29.5,49 30,49 Z" />
+    <path
+        android:fillColor="#64748B"
+        android:pathData="M30,54 L44,54 C44.5,54 45,54.5 45,55 C45,55.5 44.5,56 44,56 L30,56 C29.5,56 29,55.5 29,55 C29,54.5 29.5,54 30,54 Z" />
+
+    <!-- Audio waveform in center / speech dubbing bars -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M38,68 L40,68 C40.6,68 41,68.4 41,69 L41,71 C41,71.6 40.6,72 40,72 L38,72 C37.4,72 37,71.6 37,71 L37,69 C37,68.4 37.4,68 38,68 Z" />
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M44,64 L46,64 C46.6,64 47,64.4 47,65 L47,75 C47,75.6 46.6,76 46,76 L44,76 C43.4,76 43,75.6 43,75 L43,65 C43,64.4 43.4,64 44,64 Z" />
+    <path
+        android:fillColor="#F43F5E"
+        android:pathData="M50,60 L52,60 C52.6,60 53,60.4 53,61 L53,79 C53,79.6 52.6,80 52,80 L50,80 C49.4,80 49,79.6 49,79 L49,61 C49,60.4 49.4,60 50,60 Z" />
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M56,63 L58,63 C58.6,63 59,63.4 59,64 L59,76 C59,76.6 58.6,77 58,77 L56,77 C55.4,77 55,76.6 55,75 L55,64 C55,63.4 55.4,63 56,63 Z" />
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M62,66 L64,66 C64.6,66 65,66.4 65,67 L65,73 C65,73.6 64.6,74 64,74 L62,74 C61.4,74 61,73.6 61,73 L61,67 C61,66.4 61.4,66 62,66 Z" />
+
+    <!-- Bangla dub badge / translation bubble icon on the right side -->
+    <path
+        android:fillColor="#F43F5E"
+        android:pathData="M64,48 L76,48 C78.2,48 80,49.8 80,52 L80,62 C80,64.2 78.2,66 76,66 L72,66 L68,70 L68,66 L64,66 C61.8,66 60,64.2 60,62 L60,52 C60,49.8 61.8,48 64,48 Z" />
+    <!-- Letter "ব" or speech waves inside the badge -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M66,52 L74,52 C74.6,52 75,52.4 75,53 L75,54 L70,54 L74,60 L71,60 L68,55 L68,61 L66,61 Z" />
+</vector>

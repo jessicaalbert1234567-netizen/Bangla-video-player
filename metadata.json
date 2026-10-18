@@ -1,0 +1,6 @@
+{
+  "name": "AutoMkvDubber",
+  "description": "Automated MKV movie dubber: extracts audio & English SRT, translates to Bangla, and synthesizes time-synced dubbed audio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
