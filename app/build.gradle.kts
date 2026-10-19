@@ -129,6 +129,8 @@ dependencies {
   implementation(libs.moshi.kotlin)
   implementation(libs.okhttp)
   implementation(libs.ffmpeg.kit)
+  implementation(libs.smart.exception.java)
+  implementation(libs.smart.exception.common)
   // implementation(libs.play.services.location)
   implementation(libs.retrofit)
   testImplementation(libs.androidx.compose.ui.test.junit4)

@@ -68,13 +68,13 @@ class DubbingPipelineManager(
             val extractedAudioFile = File(workDir, "${baseName}_original_audio.aac")
             val extractedEngSrtFile = File(workDir, "${baseName}_english.srt")
 
-            val audioExtractCmd = "-y -i $safInput -map 0:a:0 -vn -c:a aac -b:a 192k \"${extractedAudioFile.absolutePath}\""
+            val audioExtractCmd = "-y -i \"$safInput\" -map 0:a:0 -vn -c:a aac -b:a 192k \"${extractedAudioFile.absolutePath}\""
             onLog("⏳ মূল অডিও ট্র্যাক এক্সট্রাক্ট করা হচ্ছে...", LogLevel.INFO)
             val audioSession = FFmpegKit.execute(audioExtractCmd)
 
             if (!ReturnCode.isSuccess(audioSession.returnCode) || !extractedAudioFile.exists()) {
                 onLog("⚠️ প্রাথমিক অডিও এক্সট্রাকশন ব্যর্থ হয়েছে, কপি মোডে চেষ্টা করা হচ্ছে...", LogLevel.WARNING)
-                FFmpegKit.execute("-y -i $safInput -map 0:a:0 -vn -c:a copy \"${extractedAudioFile.absolutePath}\"")
+                FFmpegKit.execute("-y -i \"$safInput\" -map 0:a:0 -vn -c:a copy \"${extractedAudioFile.absolutePath}\"")
             }
 
             if (extractedAudioFile.exists()) {
@@ -83,12 +83,12 @@ class DubbingPipelineManager(
 
             // Extract subtitle track
             onLog("⏳ ইংলিশ সাবটাইটেল ট্র্যাক বের করা হচ্ছে...", LogLevel.INFO)
-            val engSubCmd = "-y -i $safInput -map 0:s:m:language:eng -c:s srt \"${extractedEngSrtFile.absolutePath}\""
+            val engSubCmd = "-y -i \"$safInput\" -map 0:s:m:language:eng -c:s srt \"${extractedEngSrtFile.absolutePath}\""
             var subSession = FFmpegKit.execute(engSubCmd)
 
             if (!ReturnCode.isSuccess(subSession.returnCode) || !extractedEngSrtFile.exists() || extractedEngSrtFile.length() == 0L) {
                 onLog("⚠️ ভাষা নির্দিষ্ট করা সাবটাইটেল মেলেনি, ১ম সাবটাইটেল ট্র্যাকে খোঁজা হচ্ছে...", LogLevel.WARNING)
-                val fallbackSubCmd = "-y -i $safInput -map 0:s:0 -c:s srt \"${extractedEngSrtFile.absolutePath}\""
+                val fallbackSubCmd = "-y -i \"$safInput\" -map 0:s:0 -c:s srt \"${extractedEngSrtFile.absolutePath}\""
                 subSession = FFmpegKit.execute(fallbackSubCmd)
             }
 
@@ -195,7 +195,7 @@ class DubbingPipelineManager(
                 onStepChanged(PipelineStep.MUXING_VIDEO, 90, "মুভিতে নতুন বাংলা অডিও যুক্ত করা হচ্ছে (Muxing)...")
                 val finalDubbedVideoFile = File(workDir, "${baseName}_bangla_dubbed.mkv")
 
-                val muxCmd = "-y -i $safInput -i \"${finalMp3File.absolutePath}\" -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 192k \"${finalDubbedVideoFile.absolutePath}\""
+                val muxCmd = "-y -i \"$safInput\" -i \"${finalMp3File.absolutePath}\" -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 192k \"${finalDubbedVideoFile.absolutePath}\""
                 val muxSession = FFmpegKit.execute(muxCmd)
 
                 if (ReturnCode.isSuccess(muxSession.returnCode) && finalDubbedVideoFile.exists()) {
